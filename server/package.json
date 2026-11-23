@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "node --watch --env-file=.env src/index.js",
     "start": "node --env-file=.env src/index.js",
+    "start:prod": "node src/index.js",
     "migrate": "node --env-file=.env src/migrate.js",
+    "migrate:prod": "node src/migrate.js",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {

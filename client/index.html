@@ -21,12 +21,8 @@
     <meta name="format-detection" content="telephone=no" />
 
     <!-- Aplica el tema guardado antes de pintar, para evitar un parpadeo claro/oscuro -->
-    <script>
-      try {
-        var t = localStorage.getItem('ft_theme');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
-      } catch (e) {}
-    </script>
+    <!-- Archivo aparte (no inline) para cumplir la CSP del servidor: script-src 'self' -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <noscript>FinanTrack necesita JavaScript para funcionar.</noscript>

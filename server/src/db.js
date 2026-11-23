@@ -1,10 +1,15 @@
 import mysql from 'mysql2/promise';
 
+// DB_* tiene prioridad; si no está, se usan las variables que inyecta el MySQL de Railway (MYSQL*).
+const env = (name, railwayName, fallback) => process.env[name] ?? process.env[railwayName] ?? fallback;
+
+export const DB_NAME = env('DB_NAME', 'MYSQLDATABASE', 'finantrack');
+
 export const dbConfig = {
-  host: process.env.DB_HOST ?? '127.0.0.1',
-  port: Number(process.env.DB_PORT ?? 3306),
-  user: process.env.DB_USER ?? 'root',
-  password: process.env.DB_PASSWORD ?? '',
+  host: env('DB_HOST', 'MYSQLHOST', '127.0.0.1'),
+  port: Number(env('DB_PORT', 'MYSQLPORT', 3306)),
+  user: env('DB_USER', 'MYSQLUSER', 'root'),
+  password: env('DB_PASSWORD', 'MYSQLPASSWORD', ''),
   timezone: 'Z',
   dateStrings: ['DATE'],
   decimalNumbers: true,
@@ -12,7 +17,7 @@ export const dbConfig = {
 
 export const pool = mysql.createPool({
   ...dbConfig,
-  database: process.env.DB_NAME ?? 'finantrack',
+  database: DB_NAME,
   connectionLimit: 10,
 });
 

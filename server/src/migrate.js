@@ -1,8 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import mysql from 'mysql2/promise';
-import { dbConfig } from './db.js';
-
-const DB_NAME = process.env.DB_NAME ?? 'finantrack';
+import { DB_NAME, dbConfig } from './db.js';
 
 export const CATEGORIES = [
   ['food', 'Alimentación', 'expense', '🍽️'],

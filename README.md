@@ -141,6 +141,36 @@ cloudflared tunnel --url http://localhost:4173
 
 Abre en el teléfono la dirección `https://…trycloudflare.com` que imprime el túnel y elige «Instalar».
 
+## Despliegue en Railway
+
+Un solo servicio de Node sirve la API y el cliente compilado (`client/dist`) desde el mismo origen, así que no hace falta CORS y el service worker funciona igual que en local. La configuración está en `railway.json`:
+
+- **Build:** `npm run build:prod` (instala el servidor sin dependencias de desarrollo y compila el cliente).
+- **Antes de cada despliegue:** `npm run migrate:prod` (crea o actualiza las tablas y las categorías).
+- **Arranque:** `npm start`. Healthcheck en `/api/health`.
+
+Pasos en Railway:
+
+1. **New Project → Deploy from GitHub repo** y elige este repositorio (rama `main`).
+2. En el proyecto, **+ New → Database → MySQL**. El servidor lee solo las variables `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE`; para conectarlas, en el servicio de la app agrega estas referencias:
+   `MYSQLHOST=${{MySQL.MYSQLHOST}}`, `MYSQLPORT=${{MySQL.MYSQLPORT}}`, `MYSQLUSER=${{MySQL.MYSQLUSER}}`, `MYSQLPASSWORD=${{MySQL.MYSQLPASSWORD}}`, `MYSQLDATABASE=${{MySQL.MYSQLDATABASE}}`.
+3. **Volumen para las facturas:** en el servicio de la app, **+ Volume** montado en `/data`, y la variable `UPLOAD_DIR=/data/uploads`. Sin volumen, las fotos se pierden en cada despliegue.
+4. Resto de variables del servicio:
+
+| Variable | Valor |
+|---|---|
+| `JWT_SECRET` | Cadena larga y aleatoria (`node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`). |
+| `TRUST_PROXY` | `1` (Railway pone un proxy delante; sin esto el límite de intentos ve a todos con la misma IP). |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | `cd server && npx web-push generate-vapid-keys`. Si cambian, los dispositivos deben volver a activar las notificaciones. |
+| `VAPID_SUBJECT` | `mailto:tu-correo` |
+| `APP_TIMEZONE` | `America/Bogota` |
+
+`PORT` lo pone Railway y `CORS_ORIGIN` no hace falta (mismo origen).
+
+5. **Settings → Networking → Generate Domain** para tener la URL HTTPS (la PWA solo se instala y recibe push con HTTPS).
+
+Para probar lo mismo en local: `npm run build:prod`, `npm run migrate:prod` y `npm start` con las variables definidas en la terminal; la app queda en `http://localhost:4000`.
+
 ## Identidad: Libreta + Brote
 
 **Brote** es la mascota: una semilla que germina, el ahorro que crece. Es un SVG propio con 7 estados de ánimo (saluda, contento, celebra, piensa, preocupado, triste, duerme) y comenta tu situación en la pantalla de inicio: celebra si ahorras, se preocupa cerca de un límite y duerme cuando no hay conexión. Los íconos de la app se generan a partir de él (`npm --prefix client run icons`).
