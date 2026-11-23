@@ -8,13 +8,13 @@
     "migrate": "npm --prefix server run migrate",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
-    "build": "npm --prefix client run build",
+    "build": "npm run build:prod",
     "preview": "npm --prefix client run preview",
     "test": "npm --prefix server test",
     "test:client": "npm --prefix client test",
-    "build:prod": "npm --prefix server ci --omit=dev && npm --prefix client ci && npm --prefix client run build",
+    "build:prod": "npm --prefix server ci --omit=dev && npm --prefix client ci --include=dev && npm --prefix client run build",
     "migrate:prod": "npm --prefix server run migrate:prod",
-    "start": "npm --prefix server run start:prod"
+    "start": "npm run migrate:prod && npm --prefix server run start:prod"
   },
   "engines": {
     "node": "24.x"

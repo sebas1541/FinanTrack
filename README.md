@@ -143,11 +143,11 @@ Abre en el teléfono la dirección `https://…trycloudflare.com` que imprime el
 
 ## Despliegue en Railway
 
-Un solo servicio de Node sirve la API y el cliente compilado (`client/dist`) desde el mismo origen, así que no hace falta CORS y el service worker funciona igual que en local. La configuración está en `railway.json`:
+Un solo servicio de Node sirve la API y el cliente compilado (`client/dist`) desde el mismo origen, así que no hace falta CORS y el service worker funciona igual que en local. Railway usa los pasos por defecto de Node, sin archivo de configuración:
 
-- **Build:** `npm run build:prod` (instala el servidor sin dependencias de desarrollo y compila el cliente).
-- **Antes de cada despliegue:** `npm run migrate:prod` (crea o actualiza las tablas y las categorías).
-- **Arranque:** `npm start`. Healthcheck en `/api/health`.
+- **Build:** `npm run build` (instala el servidor sin dependencias de desarrollo, instala el cliente y lo compila).
+- **Arranque:** `npm start` (aplica `npm run migrate:prod`, que es idempotente, y arranca el servidor).
+- **Healthcheck:** `/api/health` (configurado en el servicio).
 
 Pasos en Railway:
 
@@ -169,7 +169,7 @@ Pasos en Railway:
 
 5. **Settings → Networking → Generate Domain** para tener la URL HTTPS (la PWA solo se instala y recibe push con HTTPS).
 
-Para probar lo mismo en local: `npm run build:prod`, `npm run migrate:prod` y `npm start` con las variables definidas en la terminal; la app queda en `http://localhost:4000`.
+Para probar lo mismo en local: `npm run build` y `npm start` con las variables definidas en la terminal; la app queda en `http://localhost:4000`.
 
 ## Identidad: Libreta + Brote
 
